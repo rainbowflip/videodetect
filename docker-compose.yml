@@ -1,0 +1,15 @@
+version: '2'
+services:
+  zm:
+    image: "video/edit"
+    ports:
+      - "2022:80"
+    volumes:
+      - ./code/:/home/videoeditor/
+      - ./conf/:/etc/nginx/sites-enabled/
+    restart: always
+    command: bash -c "uwsgi --ini uwsgi.ini & python manage.py process_tasks & /usr/sbin/nginx -g 'daemon off;'"
+    environment:
+      - LANG=zh_CN.UTF-8,
+      - LC_ALL=zh_CN.UTF-8,
+      - LANGUAGE=zh_CN.UTF-8

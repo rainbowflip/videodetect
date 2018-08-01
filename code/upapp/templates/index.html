@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, maximum-scale=1">
+    <title>soccer video detector</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/index.css"/>
+    <script type="text/javascript" src="/static/js/jquery.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.Huploadify.js"></script>
+    <script type="text/javascript" src="/static/js/videodetect.js"></script>
+<style type="text/css">
+</style>
+
+<body>
+    <header class="select_btn">
+        <span>
+            <input id="select" type="radio" name="radio" checked><a>1、select a file or type a url</a>
+            <input id="showresult" type="radio" name="radio"><a>2、result for the video</a>
+            <input id="history" type="radio" name="radio"><a>3、video detected hitory</a>
+            <a class="a-slider"></a>
+        </span>
+        <div id="upload" ></div>
+    </header>
+    <section>
+        <div class="selectBox">
+            <div id="file-uploader-btn" class="upload-video">
+                <i class="icons icon-upload"></i><span>本地上传</span>
+            </div>
+        <div style="padding-left:150px;">
+            <div class="input-group">
+                <input type="text" class="form-control" name="videourl" id="videourl" placeholder="请输入视频网址">
+                <span class="input-group-btn">
+                    <input class="btn btn-primary" value="通过网址识别" type="submit" id="classifyurl">
+                </span>
+            </div>
+        </div>
+        </div>
+        <div class="viewBox">
+	    <div class="originShow"></div>
+	    <div class="results"></div>
+        </div>
+    </section>
+</body>
+
+</html>
+
