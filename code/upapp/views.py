@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import render
 from django.http import HttpResponse, Http404, HttpResponseBadRequest, HttpResponseForbidden, JsonResponse
+from django.views.decorators.clickjacking import xframe_options_exempt
 from .models import *
 import os
 import json
 import urllib.request
 import sys
 from django.views.decorators.csrf import csrf_exempt
+
 from django.http import FileResponse
 from .tasks import *
 
@@ -45,4 +47,42 @@ def downfile(request):
     response['Content-Type']='application/octet-stream'
     response['Content-Disposition']='attachment;filename="{}"' .format(filename)
     return response
+
+
+def makefile(filename,reqfile):
+    with open(filename,'ab+') as f:
+        print('-------------------makefile')
+        for chunk in reqfile.chunks():
+            f.write(chunk)
+#@xframe_options_exempt
+@csrf_exempt
+def se_upload(request):
+    try:
+        reqfile = request.FILES.get('file')
+        totalsize = request.POST.get('size')
+        filename = request.POST.get('filename')
+        uploadedsize = request.POST.get('uploadedsize')
+        path = request.POST.get('path')
+        print(path+filename)
+        if os.path.exists(path+filename):
+            currentsize = os.path.getsize(filename)
+            print(currentsize < int(totalsize),"currentsize < totalsize")
+            if currentsize < int(totalsize):
+                print("currentsize < totalsize")
+                if currentsize <= int(uploadedsize):
+                    print("currentsize <= uploadedsize:")
+                    makefile(filename,reqfile)
+                    response = JsonResponse({'status':'deal'})
+                else:
+                    response = JsonResponse({'status':'deal','uploadedsize':currentsize})
+            else:
+                response = JsonResponse({'status':'complete'})
+        else:
+            makefile(filename,reqfile)
+            response = JsonResponse({'status':'deal'})
+    except Exception as e:
+        response = JsonResponse({'status':'error','msg':e})
+    finally:
+        response["Access-Control-Allow-Origin"] = "*"
+        return response
 

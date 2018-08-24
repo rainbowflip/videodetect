@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+<head>
+</head>
+<body>
+        <input type="text" name="path"/>
+        <input type="file"/>
+        <button>upload</button>
+</body>
+<script>
+function uploadFetch(url,file,formdata,uploadedsize,splitsize){ 
+        fetch(url,{
+//              headers:{
+//                      'content-type': 'application/json',
+//              },
+                method:'POST',
+                body:formdata,
+                mode:'cors',
+        }).then(res=>res.json())
+        .then(res=>{
+                console.log(res)
+                if(res.status=='deal'){
+                        if(res.uploadedsizei!=undefined){
+                            uploadedsize = res.uploadedsize;
+                                console.log("yijing",uploadedsize)
+                        }else{
+                            uploadedsize = uploadedsize + splitsize;
+                                console.log('new',uploadedsize)
+                        }
+                        formdata.set('uploadedsize',uploadedsize)
+                        console.log(uploadedsize,"------",uploadedsize/formdata.get('size')*100+"%")
+                        formdata.set('file',file.slice(uploadedsize,uploadedsize+splitsize));
+                        uploadFetch(url,file,formdata,uploadedsize,splitsize);
+                }else{
+                        alert("done!")
+                }
+
+        })
+}
+var uploadedsize = 0,splitsize = 1024*1024*10,url='http://95.163.194.215:2022/se_upload/';
+document.querySelector("button").onclick = function(){
+        let file = document.querySelector("input[type='file']").files[0];
+        let filename = file.name,filesize = file.size;
+        let formdata = new FormData();
+        console.log('-=-=-=-',formdata);
+        formdata.append('filename',filename);
+        formdata.append('size',filesize);
+        formdata.append('file',file.slice(uploadedsize,uploadedsize+splitsize));
+        formdata.append('uploadedsize',uploadedsize)
+        formdata.append('path',document.querySelector('input[name="path"]').value)
+        uploadFetch(url,file,formdata,uploadedsize,splitsize);
+}
+</script>
+</html>
+

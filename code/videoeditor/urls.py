@@ -22,4 +22,5 @@ urlpatterns = [
     url(r'^upload/$', views.upload),
     url(r'^$',views.home),
     url(r'^edit/$',views.edit),
+    url(r'^se_upload',views.se_upload),
 ]
